@@ -116,7 +116,7 @@ def download_models():
             print(f"⬇️ Downloading {filename}...")
 
             url = f"https://drive.google.com/uc?id={file_id}"
-            gdown.download(url, path, quiet=False, fuzzy=True)
+            gdown.download(url, path, quiet=False)
 
         else:
             print(f"✅ {filename} already exists")
