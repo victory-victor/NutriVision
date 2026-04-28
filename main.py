@@ -109,6 +109,9 @@ def _pick(row, variants) -> str:
 
 # ===================== LOAD =====================
 def download_models():
+    # ✅ Ensure models directory exists
+    os.makedirs(MODEL_BASE, exist_ok=True)
+
     for filename, file_id in MODEL_FILES.items():
         path = os.path.join(MODEL_BASE, filename)
 
@@ -120,7 +123,6 @@ def download_models():
 
         else:
             print(f"✅ {filename} already exists")
-
 def load_all():
     global mmfood_df, nutrition_df, merged_index, embedder
     global main_model, indian_model, main_classes, indian_classes
