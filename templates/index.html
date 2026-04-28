@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriVision — AI Food Intelligence</title>
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5235/5235253.png" type="image/x-icon">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&display=swap" rel="stylesheet">
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay">
+    <div class="loading-visual">
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+      <div class="loading-icon">🔬</div>
+    </div>
+    <div class="loading-text" id="loading-text">Analyzing your dish…</div>
+    <div class="loading-sub" id="loading-sub">Running AI vision models</div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">Success</span>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <span class="nav-logo-dot"></span>
+      NutriVision
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#upload-section">Analyze</a></li>
+      <li><a href="#results-section">Results</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="nav-cta desktop-cta" onclick="scrollToUpload()">Try Now →</button>
+
+      <button class="mobile-toggle" id="menu-toggle" onclick="toggleMenu()">
+        <span class="line"></span>
+        <span class="line"></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <ul class="mobile-nav-links">
+      <li><a href="#upload-section" onclick="toggleMenu()">Analyze</a></li>
+      <li><a href="#results-section" onclick="toggleMenu()">Results</a></li>
+      <li><button class="nav-cta mobile-cta" onclick="scrollToUpload(); toggleMenu()">Try Now →</button></li>
+    </ul>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <ul class="mobile-nav-links">
+      <li><a href="#upload-section" onclick="toggleMenu()">Analyze</a></li>
+      <li><a href="#results-section" onclick="toggleMenu()">Results</a></li>
+      <li><button class="nav-cta" onclick="scrollToUpload(); toggleMenu()">Try Now →</button></li>
+    </ul>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+    <!-- <div class="hero-eyebrow" id="eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      AI-Powered Food Intelligence
+    </div> -->
+    <div class="hero-brand-area">
+      <div class="brand-reveal-container desktop-only">
+        <h1 class="bounce-title" id="interactive-logo">
+          <span>N</span><span>V</span><span>I</span><span>S</span><span>I</span><span>O</span><span>N</span>
+        </h1>
+      </div>
+
+      <div class="mobile-hero-container mobile-only">
+        <img src="https://images.pexels.com/photos/5965962/pexels-photo-5965962.jpeg?q=80&w=1000&auto=format&fit=crop"
+          alt="Nutrivision Mobile" class="mobile-hero-img">
+        <div class="mobile-hero-overlay">
+          <h2>NUTRIVISION</h2>
+          <p>AI-Powered Food Intelligence</p>
+        </div>
+      </div>
+    </div>
+    <h1 class="hero-title" id="hero-title">
+      <span class="line"><span class="line-inner">Know what you</span></span>
+      <span class="line"><span class="line-inner"><span>eat,</span> instantly.</span></span>
+    </h1>
+    <p class="hero-sub" id="hero-sub">
+      Upload any food photo. Our dual AI classifier identifies Indian &amp; global dishes,
+      then delivers complete nutrition data, recipe, and cooking method in seconds.
+    </p>
+    <div class="hero-actions" id="hero-actions">
+      <button class="btn-primary hoverable" onclick="scrollToUpload()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+        Analyze Your Food
+      </button>
+      <button class="btn-secondary hoverable" onclick="scrollToSearch()">Search a Dish</button>
+    </div>
+    <div class="hero-stats" id="hero-stats">
+      <div class="stat">
+        <div class="stat-num" data-count="100">0</div>
+        <div class="stat-label">Food Classes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-count="2200">0</div>
+        <div class="stat-label">K+ Recipes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-count="2">0</div>
+        <div class="stat-label">AI Models</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-count="99">0</div>
+        <div class="stat-label">% Accuracy</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UPLOAD SECTION -->
+  <section id="upload-section">
+    <div class="section-label reveal">Analyze</div>
+    <h2 class="section-title reveal">
+      Drop your food image,<br />let AI do the rest.
+    </h2>
+    <div class="upload-grid">
+      <!-- Drop zone -->
+      <div class="drop-zone hoverable reveal" id="drop-zone">
+        <div class="dz-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="3" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+        </div>
+        <div class="dz-text">Drop your image here</div>
+        <div class="dz-sub">PNG, JPG, WEBP — up to 10MB</div>
+        <div class="dz-or">or</div>
+        <button type="button" class="browse-btn hoverable" id="trigger-upload">
+          Browse Files
+        </button>
+        <input type="file" id="file-input" accept="image/*" style="display: none;" />
+        <input type="file" id="file-input" accept="image/*" />
+        <img id="preview-img" alt="Preview" />
+        <div class="image-overlay">
+          <button class="overlay-btn hoverable" onclick="document.getElementById('file-input').click()">Change
+            Image</button>
+          <button class="overlay-btn hoverable" onclick="clearImage()">Remove</button>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-panel reveal">
+        <!-- Search -->
+        <div class="panel-card">
+          <div class="panel-card-title">
+            <div class="pill-icon" style="background:rgba(58,181,232,.1)">🔍</div>
+            Search by Name
+          </div>
+          <div class="search-row">
+            <input type="text" class="search-input" id="search-input" placeholder="e.g. Butter Chicken, Pizza…"
+              onkeydown="if(event.key==='Enter')searchDish()" />
+            <button class="search-btn hoverable" onclick="searchDish()">Search</button>
+          </div>
+        </div>
+
+        <!-- Analyze -->
+        <div class="panel-card">
+          <div class="panel-card-title">
+            <div class="pill-icon" style="background:rgba(232,103,58,.1)">⚡</div>
+            AI Analysis
+          </div>
+          <p style="font-size:.85rem;color:var(--ink-3);font-weight:300;margin-bottom:20px;line-height:1.6">
+            Our pipeline uses two ResNet-50 classifiers (global + Indian cuisine)
+            combined with BLIP-2 visual captioning for maximum accuracy.
+          </p>
+          <button class="analyze-btn hoverable" id="analyze-btn" onclick="analyzeImage()" disabled>
+            <span id="btn-text">Upload an image first</span>
+            <div class="spinner" id="btn-spinner"></div>
+          </button>
+        </div>
+
+        <!-- Info cards -->
+        <div class="panel-card">
+          <div class="panel-card-title">
+            <div class="pill-icon" style="background:rgba(46,201,126,.1)">🤖</div>
+            Model Pipeline
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div
+              style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border-radius:10px">
+              <span style="font-size:.82rem;font-weight:500">MMFood Classifier</span>
+              <span class="model-badge"><span class="model-badge-dot"></span>Active</span>
+            </div>
+            <div
+              style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border-radius:10px">
+              <span style="font-size:.82rem;font-weight:500">Indian Food Classifier</span>
+              <span class="model-badge"><span class="model-badge-dot"></span>Active</span>
+            </div>
+            <div
+              style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border-radius:10px">
+              <span style="font-size:.82rem;font-weight:500">BLIP-2 Vision</span>
+              <span class="model-badge"><span class="model-badge-dot"
+                  style="background:var(--accent-2)"></span>Fallback</span>
+            </div>
+            <div
+              style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border-radius:10px">
+              <span style="font-size:.82rem;font-weight:500">Recipe Semantic Search</span>
+              <span class="model-badge"><span class="model-badge-dot"></span>Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS SECTION -->
+  <section id="results-section">
+    <div id="results-content"></div>
+    <div id="ai-insight-section" style="display:none; margin-top: 2rem;">
+      <h3 class="section-title">✨ AI Performance Insights</h3>
+      <div class="insight-grid" id="insight-cards-container">
+      </div>
+      <section id="bmi-calculator" class="bmi-section">
+        <div class="container">
+          <div class="bmi-card">
+            <div class="bmi-input-area">
+              <h3 class="section-title">Body Mass Index</h3>
+              <p class="subtitle">Quick health assessment tool</p>
+
+              <div class="input-group">
+                <label>Height (cm)</label>
+                <input type="number" id="bmi-height" placeholder="175" min="50" max="250">
+              </div>
+
+              <div class="input-group">
+                <label>Weight (kg)</label>
+                <input type="number" id="bmi-weight" placeholder="70" min="10" max="300">
+              </div>
+
+              <button onclick="calculateBMI()" class="calculate-btn">Check Status →</button>
+            </div>
+
+            <div class="bmi-result-area" id="bmi-result-display">
+              <div class="bmi-score-circle">
+                <span id="bmi-value">0.0</span>
+                <small>BMI</small>
+              </div>
+              <div class="bmi-status-box">
+                <h4 id="bmi-category">Enter Data</h4>
+                <p id="bmi-advice">Calculate to see your metabolic status.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <footer>
+    <strong>NutriVision</strong> — AI Food Intelligence &copy; 2026 &nbsp;·&nbsp;
+    Powered by ResNet-50 · BLIP-2 · MiniLM Semantic Search
+  </footer>
+
+  <div class="ai-chat-wrapper">
+    <button id="chat-bubble" class="chat-bubble-btn">
+      <img class="chat-icon" style="height: 100%; width: 100%;"
+        src="https://cdn-icons-png.flaticon.com/512/5235/5235253.png" alt="">
+      <span class="close-icon">&times;</span>
+    </button>
+
+    <div id="chat-window" class="chat-window">
+      <div class="chat-header">
+        <div class="header-dot"></div>
+        <p>NutriVision Assistant</p>
+      </div>
+      <div id="chat-messages" class="chat-content">
+        <div class="message bot-msg">Hi! I'm your AI nutritionist. How can I help you reach your goals today?</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chat-user-input" placeholder="Give me a weekly diet plan...." autocomplete="off">
+        <button id="send-chat-btn">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── JAVASCRIPT ─────────────────────────────────────────── -->
+  <script src="/static/js/script.js"></script>
+
+</body>
+
+</html>
