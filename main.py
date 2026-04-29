@@ -206,10 +206,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="NutriVision API", version="3.0", lifespan=lifespan)
 
-@app.get("/")
-def home():
-    return {"status": "running"}
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.add_middleware(
