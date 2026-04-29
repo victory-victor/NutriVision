@@ -40,18 +40,18 @@ MODEL_FILES = {
 }
 
 # ===================== INIT =====================
-app = FastAPI(title="NutriVision API", version="3.0")
+# app = FastAPI(title="NutriVision API", version="3.0", lifespan=lifespan)
 
 from fastapi.staticfiles import StaticFiles
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"[NutriVision] Using device: {device}")
@@ -182,8 +182,44 @@ def load_all():
     except Exception as e:
         print("❌ Load Error:", e)
 
-download_models()   # FIRST
-load_all()          # THEN load
+
+import threading
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("🚀 Server starting...")
+
+    def background_setup():
+        try:
+            download_models()   # ⬇️ Step 1
+            load_all()          # 🧠 Step 2
+        except Exception as e:
+            print("❌ Startup error:", e)
+
+    import threading
+    threading.Thread(target=background_setup).start()
+
+    yield
+
+    print("🛑 Server shutting down...")
+
+app = FastAPI(title="NutriVision API", version="3.0", lifespan=lifespan)
+
+@app.get("/")
+def home():
+    return {"status": "running"}
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# load_all()          # THEN load
 
 # ===================== HELPERS =====================
 
