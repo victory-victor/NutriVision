@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 from torchvision import models
 import torch.nn as nn
 import os
-import gdown
+# import gdown
 from PIL import Image
 import pandas as pd
 import numpy as np
@@ -30,28 +30,28 @@ MODEL_BASE = os.environ.get("MODEL_PATH", "./models")
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 ai_model = genai.GenerativeModel('gemini-2.5-flash')
 
-MODEL_FILES = {
-    "mmfood_model.pth": "1zbGXCs7fi39q9Xvf3oLhwPUdDDrijqtb",
-    "indian_food_model.pth": "1meyVD7oCGxkfrOoJKtpurwHdMCXgvlsg",
-    "merged_df.pkl": "1T9K-0nmdUNZRvSFGmTRYLi9EUUyhllL2",
-    "merged_index.joblib": "1UtuNxCqmEW2JinqGQEhNk0Tiyz7R8VQY",
-    "mmfood_class_names.json": "1jVLCNdRF3TRC48s8LWBEiLm2dI-tLs6h",
-    "MM-Food-100K.csv": "1QTIIbP4_nveLlsBAS292ZZhYHbwK1SZ4"
-}
+# MODEL_FILES = {
+#     "mmfood_model.pth": "1zbGXCs7fi39q9Xvf3oLhwPUdDDrijqtb",
+#     "indian_food_model.pth": "1meyVD7oCGxkfrOoJKtpurwHdMCXgvlsg",
+#     "merged_df.pkl": "1T9K-0nmdUNZRvSFGmTRYLi9EUUyhllL2",
+#     "merged_index.joblib": "1UtuNxCqmEW2JinqGQEhNk0Tiyz7R8VQY",
+#     "mmfood_class_names.json": "1jVLCNdRF3TRC48s8LWBEiLm2dI-tLs6h",
+#     "MM-Food-100K.csv": "1QTIIbP4_nveLlsBAS292ZZhYHbwK1SZ4"
+# }
 
 # ===================== INIT =====================
-# app = FastAPI(title="NutriVision API", version="3.0", lifespan=lifespan)
+app = FastAPI(title="NutriVision API", version="3.0")
 
 from fastapi.staticfiles import StaticFiles
 
-# app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"[NutriVision] Using device: {device}")
@@ -108,21 +108,22 @@ def _pick(row, variants) -> str:
     return ""
 
 # ===================== LOAD =====================
-def download_models():
-    # ✅ Ensure models directory exists
-    os.makedirs(MODEL_BASE, exist_ok=True)
+# def download_models():
+#     # ✅ Ensure models directory exists
+#     os.makedirs(MODEL_BASE, exist_ok=True)
 
-    for filename, file_id in MODEL_FILES.items():
-        path = os.path.join(MODEL_BASE, filename)
+#     for filename, file_id in MODEL_FILES.items():
+#         path = os.path.join(MODEL_BASE, filename)
 
-        if not os.path.exists(path):
-            print(f"⬇️ Downloading {filename}...")
+#         if not os.path.exists(path):
+#             print(f"⬇️ Downloading {filename}...")
 
-            url = f"https://drive.google.com/uc?id={file_id}"
-            gdown.download(url, path, quiet=False)
+#             url = f"https://drive.google.com/uc?id={file_id}"
+#             gdown.download(url, path, quiet=False)
 
-        else:
-            print(f"✅ {filename} already exists")
+#         else:
+#             print(f"✅ {filename} already exists")
+
 def load_all():
     global mmfood_df, nutrition_df, merged_index, embedder
     global main_model, indian_model, main_classes, indian_classes
@@ -183,39 +184,39 @@ def load_all():
         print("❌ Load Error:", e)
 
 
-import threading
-from contextlib import asynccontextmanager
+# import threading
+# from contextlib import asynccontextmanager
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("🚀 Server starting...")
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     print("🚀 Server starting...")
 
-    def background_setup():
-        try:
-            download_models()   # ⬇️ Step 1
-            load_all()          # 🧠 Step 2
-        except Exception as e:
-            print("❌ Startup error:", e)
+#     def background_setup():
+#         try:
+#             download_models()   # ⬇️ Step 1
+#             load_all()          # 🧠 Step 2
+#         except Exception as e:
+#             print("❌ Startup error:", e)
 
-    import threading
-    threading.Thread(target=background_setup).start()
+#     import threading
+#     threading.Thread(target=background_setup).start()
 
-    yield
+#     yield
 
-    print("🛑 Server shutting down...")
+#     print("🛑 Server shutting down...")
 
-app = FastAPI(title="NutriVision API", version="3.0", lifespan=lifespan)
+# app = FastAPI(title="NutriVision API", version="3.0", lifespan=lifespan)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
-# load_all()          # THEN load
+load_all()          # THEN load
 
 # ===================== HELPERS =====================
 
@@ -599,3 +600,16 @@ async def chat_assistant(request: dict):
     response = ai_model.generate_content(chat_prompt)
     return {"reply": response.text}
 
+@app.get("/get-food-image")
+async def get_food_image(query: str):
+    url = f"https://api.pexels.com/v1/search?query={query}&per_page=1"
+    headers = {"Authorization": PEXELS_API_KEY}
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, headers=headers)
+        if response.status_code == 200:
+            data = response.json()
+            # Return only the image URL to the frontend
+            img_url = data['photos'][0]['src']['medium'] if data['photos'] else ""
+            return {"url": img_url}
+        return {"url": ""}
